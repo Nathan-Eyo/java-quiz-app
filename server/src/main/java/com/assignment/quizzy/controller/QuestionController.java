@@ -44,13 +44,13 @@ public class QuestionController {
         }
     };
 
-    @PutMapping("/{id}/update")
+    @PutMapping("/question/{id}/update")
     public ResponseEntity<Question> updateQuestion(@PathVariable Long id, @RequestBody Question question) throws ChangeSetPersister.NotFoundException {
     Question updatedQuestion = questionService.updateQuestion(id, question);
     return ResponseEntity.ok(updatedQuestion);
     };
 
-    @DeleteMapping("/{id}/delete")
+    @DeleteMapping("/question/{id}/delete")
     public ResponseEntity<Void> deleteQuestion(@PathVariable Long id){
         questionService.deleteQuestion(id);
         return ResponseEntity.noContent().build();
@@ -68,9 +68,9 @@ public class QuestionController {
         return ResponseEntity.ok(difficulties);
     };
 
-    @GetMapping("/fetch-questions-for-user")
-    public ResponseEntity<List<Question>> getQuestionsForUser(@RequestParam Integer numOfQuestion,@RequestParam String subject){
-        List<Question> questionsForUser = questionService.getQuestionsForUser(numOfQuestion, subject);
+    @GetMapping("/quiz/fetch-questions-for-user")
+    public ResponseEntity<List<Question>> getQuestionsForUser(@RequestParam Integer numOfQuestion,@RequestParam String subject, @RequestParam String difficulty){
+        List<Question> questionsForUser = questionService.getQuestionsForUser(numOfQuestion, subject, difficulty);
         List<Question> mutableQuestions = new ArrayList<>(questionsForUser);
         Collections.shuffle(mutableQuestions);
 

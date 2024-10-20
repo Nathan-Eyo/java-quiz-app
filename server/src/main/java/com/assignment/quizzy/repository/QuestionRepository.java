@@ -17,4 +17,6 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
     List<String> findDistinctDifficulty();
 
     Page<Question> findBySubject(String subject, Pageable pageable);
+
+    Page<Question> findBySubjectAndDifficulty(String subject, String difficulty, Pageable pageable);
 }
