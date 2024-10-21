@@ -2,8 +2,10 @@ package com.assignment.quizzy.controller;
 
 import com.assignment.quizzy.model.Question;
 import com.assignment.quizzy.service.IQuestionService;
+import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
+@CrossOrigin("http://localhost:5173")
 @RestController
 @RequestMapping("/api/quizzes")
 @RequiredArgsConstructor
@@ -22,11 +25,32 @@ public class QuestionController {
 //        this.questionService = questionService;
 //    }
 
+//    @PostMapping("/create-new-question")
+//    public ResponseEntity<Question> createQuestion(@Valid @RequestBody Question question){
+//        Question createdQuestion = questionService.createQuestion(question);
+//        return ResponseEntity.status(HttpStatus.CREATED).body(createdQuestion);
+//    };
+
     @PostMapping("/create-new-question")
-    public ResponseEntity<Question> createQuestion(@Valid @RequestBody Question question){
-        Question createdQuestion = questionService.createQuestion(question);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdQuestion);
-    };
+    public ResponseEntity<?> createQuestion(@Valid @RequestBody Question question) {
+        try {
+            // Attempt to create the question using the service
+            Question createdQuestion = questionService.createQuestion(question);
+            // Return a successful response if no issues arise
+            return ResponseEntity.status(HttpStatus.CREATED).body(createdQuestion);
+        } catch (DataIntegrityViolationException e) {
+            // This handles database-related exceptions (e.g., constraint violations)
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid data: " + e.getMessage());
+        } catch (ConstraintViolationException e) {
+            // This handles validation-related issues
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Validation error: " + e.getMessage());
+        } catch (Exception e) {
+            // Generic catch-all for unexpected exceptions
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("An error occurred while creating the question: " + e.getMessage());
+        }
+    }
+
 
     @GetMapping("/all-questions")
     public ResponseEntity<List<Question>> getAllQuestions(){
@@ -45,10 +69,11 @@ public class QuestionController {
     };
 
     @PutMapping("/question/{id}/update")
-    public ResponseEntity<Question> updateQuestion(@PathVariable Long id, @RequestBody Question question) throws ChangeSetPersister.NotFoundException {
-    Question updatedQuestion = questionService.updateQuestion(id, question);
-    return ResponseEntity.ok(updatedQuestion);
-    };
+    public ResponseEntity<Question> updateQuestion(
+            @PathVariable Long id, @RequestBody Question question) throws ChangeSetPersister.NotFoundException {
+        Question updatedQuestion = questionService.updateQuestion(id, question);
+        return ResponseEntity.ok(updatedQuestion);
+    }
 
     @DeleteMapping("/question/{id}/delete")
     public ResponseEntity<Void> deleteQuestion(@PathVariable Long id){

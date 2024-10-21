@@ -1,6 +1,7 @@
 package com.assignment.quizzy.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
@@ -26,35 +27,35 @@ public class Question {
     @NotBlank
     private String difficulty;
 
-    @NotBlank
+    @Valid
     @ElementCollection
     private List<String> choices;
 
-    @NotBlank
+    @Valid
     @ElementCollection
     private List<String> correctAnswers;
 
-    public List<String> getCorrectAnswers() {
-        return correctAnswers;
-    }
-
-    public void setCorrectAnswers(List<String> correctAnswers) {
-        this.correctAnswers = correctAnswers;
-    }
-
-    public List<String> getChoices() {
-        return choices;
-    }
-
-    public void setChoices(List<String> choices) {
-        this.choices = choices;
-    }
-
-    public String getQuestion() {
-        return question;
-    }
-
-    public void setQuestion(String question) {
-        this.question = question;
-    }
+//    public List<String> getCorrectAnswers() {
+//        return correctAnswers;
+//    }
+//
+//    public void setCorrectAnswers(List<String> correctAnswers) {
+//        this.correctAnswers = correctAnswers;
+//    }
+//
+//    public List<String> getChoices() {
+//        return choices;
+//    }
+//
+//    public void setChoices(List<String> choices) {
+//        this.choices = choices;
+//    }
+//
+//    public String getQuestion() {
+//        return question;
+//    }
+//
+//    public void setQuestion(String question) {
+//        this.question = question;
+//    }
 }

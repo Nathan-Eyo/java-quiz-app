@@ -26,10 +26,7 @@ export const getAllQuestions = async() =>{
 export const fetchQuizForUser = async(number, subject, difficulty) =>{
     try {
         const res = await api.get(
-            `/quiz/fetch-questions-for-user?
-            numOfQuestion=${number}
-            &subject=${subject}
-            &difficulty=${difficulty}`)
+            `/quiz/fetch-questions-for-user?numOfQuestion=${number}&subject=${subject}&difficulty=${difficulty}`)
     return res.data
     } catch (error) {
         console.error(error)
@@ -77,7 +74,7 @@ export const getQuestionById = async(id) =>{
 
 export const deleteQuestion = async(id) =>{
     try {
-        const res = api.delete(`/question/${id}/delete`, question)
+        const res = api.delete(`/question/${id}/delete`)
         return res.data
     } catch (error) {
         console.error(error)
