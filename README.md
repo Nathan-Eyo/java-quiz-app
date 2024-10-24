@@ -163,16 +163,17 @@ The technologies used section outlines the frameworks and tools you are using fo
 - **Update a question**:
   `PUT /api/quizzes/questions/{id}/update`
   Request body:
-  `json
+
+  ```json
   {
-      "question":"What is the square root of 25?",
-      "questionType":"single",
-      "choices":["A. 5","B. 9","C. 8","D. 6"],
-      "correctAnswers":["B"],
-      "subject":"Mathematics",
-      "difficulty":"Easy"
-      }
-  `
+    "question": "What is the square root of 25?",
+    "questionType": "single",
+    "choices": ["A. 5", "B. 9", "C. 8", "D. 6"],
+    "correctAnswers": ["B"],
+    "subject": "Mathematics",
+    "difficulty": "Easy"
+  }
+  ```
 
 - **Delete a question**:
   `DELETE /api/quizzes/questions/{id}/delete`
