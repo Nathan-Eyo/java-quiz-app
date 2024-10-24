@@ -1,7 +1,18 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 
 const Navbar = () => {
+  const navigate = useNavigate();
+
+    // Logout function to clear token and redirect to login page
+    const handleLogout = () => {
+        // Clear the token from localStorage or sessionStorage
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('userDetails'); // If you store user details, clear them too
+
+        // Redirect to the login page
+        navigate('/login');
+    };
   return (
     <nav className="navbar navbar-expand-lg bg-body-tertiary px-5 shadow sticky-top">
       <div className="container-fluid">
@@ -31,6 +42,9 @@ const Navbar = () => {
               <NavLink className="nav-link" to={"/quiz-stepper"}>
                 Take Quiz
               </NavLink>
+            </li>
+            <li>
+            <button className="btn btn-danger" onClick={handleLogout}>Logout</button>
             </li>
           </ul>
         </div>

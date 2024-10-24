@@ -10,6 +10,9 @@ import AddQuestion from "../components/question/AddQuestion";
 import UpdateQuestion from "../components/question/UpdateQuestion";
 import Navbar from "../components/layout/Navbar";
 import Admin from "../components/Admin";
+import Login from "../components/Login";
+import PrivateRoute from "../components/auth/PrivateRoute";
+import Register from "../components/Register";
 
 function App() {
   return (
@@ -17,15 +20,72 @@ function App() {
       <Router>
         <Navbar />
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/quiz-stepper" element={<QuizStepper />} />
-          <Route path="/take-quiz" element={<Quiz />} />
-          <Route path="/admin" element={<Admin />} />
-
-          <Route path="/create-quiz" element={<AddQuestion />} />
-          <Route path="/update-quiz/:id" element={<UpdateQuestion />} />
-          <Route path="/all-quizzes" element={<GetAllQuiz />} />
-          <Route path="/quiz-result" element={<QuizResult />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route
+            path="/"
+            element={
+              <PrivateRoute>
+                <Home />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/quiz-stepper"
+            element={
+              <PrivateRoute>
+                <QuizStepper />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/take-quiz"
+            element={
+              <PrivateRoute>
+                <Quiz />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/admin"
+            element={
+              <PrivateRoute>
+                <Admin />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/create-quiz"
+            element={
+              <PrivateRoute>
+                <AddQuestion />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/update-quiz/:id"
+            element={
+              <PrivateRoute>
+                <UpdateQuestion />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/all-quizzes"
+            element={
+              <PrivateRoute>
+                <GetAllQuiz />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/quiz-result"
+            element={
+              <PrivateRoute>
+                <QuizResult />
+              </PrivateRoute>
+            }
+          />
         </Routes>
       </Router>
     </main>

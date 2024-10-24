@@ -13,23 +13,13 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
-@CrossOrigin("http://localhost:5173")
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/quizzes")
 @RequiredArgsConstructor
 public class QuestionController {
 
   private final IQuestionService questionService;
-
-//    private  QuestionController(IQuestionService questionService) {
-//        this.questionService = questionService;
-//    }
-
-//    @PostMapping("/create-new-question")
-//    public ResponseEntity<Question> createQuestion(@Valid @RequestBody Question question){
-//        Question createdQuestion = questionService.createQuestion(question);
-//        return ResponseEntity.status(HttpStatus.CREATED).body(createdQuestion);
-//    };
 
     @PostMapping("/create-new-question")
     public ResponseEntity<?> createQuestion(@Valid @RequestBody Question question) {
@@ -51,58 +41,105 @@ public class QuestionController {
         }
     }
 
-
     @GetMapping("/all-questions")
-    public ResponseEntity<List<Question>> getAllQuestions(){
-        List<Question> questions = questionService.getAllQuestions();
-        return ResponseEntity.ok(questions);
-    };
-
-    @GetMapping("/question/{id}")
-    public ResponseEntity<Question> getQuestionById(@PathVariable Long id) throws ChangeSetPersister.NotFoundException {
-        Optional<Question> question = questionService.getQuestionById(id);
-        if(question.isPresent()){
-            return ResponseEntity.ok(question.get());
-        } else{
-            throw new ChangeSetPersister.NotFoundException();
+    public ResponseEntity<?> getAllQuestions() {
+        try {
+            List<Question> questions = questionService.getAllQuestions();
+            return ResponseEntity.ok(questions);
+        } catch (Exception ex) {
+            // Return the error message and exception type
+            String errorMessage = String.format("Error occurred: %s. Exception Type: %s", ex.getMessage(), ex.getClass().getSimpleName());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorMessage);
         }
     };
 
+    @GetMapping("/question/{id}")
+    public ResponseEntity<?> getQuestionById(@PathVariable Long id) {
+        try {
+            Optional<Question> question = questionService.getQuestionById(id);
+            if (question.isPresent()) {
+                return ResponseEntity.ok(question.get());
+            } else {
+                throw new ChangeSetPersister.NotFoundException();
+            }
+        } catch (ChangeSetPersister.NotFoundException ex) {
+            // Handle NotFoundException specifically
+            String errorMessage = String.format("Error: %s. Exception Type: %s", "Question not found", ex.getClass().getSimpleName());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
+        } catch (Exception ex) {
+            // Catch any other exceptions
+            String errorMessage = String.format("Error occurred: %s. Exception Type: %s", ex.getMessage(), ex.getClass().getSimpleName());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorMessage);
+        }
+    }
+
     @PutMapping("/question/{id}/update")
-    public ResponseEntity<Question> updateQuestion(
-            @PathVariable Long id, @RequestBody Question question) throws ChangeSetPersister.NotFoundException {
-        Question updatedQuestion = questionService.updateQuestion(id, question);
-        return ResponseEntity.ok(updatedQuestion);
+    public ResponseEntity<?> updateQuestion(@PathVariable Long id, @RequestBody Question question) {
+        try {
+            Question updatedQuestion = questionService.updateQuestion(id, question);
+            return ResponseEntity.ok(updatedQuestion);
+        } catch (ChangeSetPersister.NotFoundException ex) {
+            // Handle not found exception
+            String errorMessage = String.format("Question with id %d not found. Exception Type: %s", id, ex.getClass().getSimpleName());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorMessage);
+        } catch (Exception ex) {
+            // Handle any other exception
+            String errorMessage = String.format("Error occurred: %s. Exception Type: %s", ex.getMessage(), ex.getClass().getSimpleName());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorMessage);
+        }
     }
 
     @DeleteMapping("/question/{id}/delete")
-    public ResponseEntity<Void> deleteQuestion(@PathVariable Long id){
-        questionService.deleteQuestion(id);
-        return ResponseEntity.noContent().build();
-    };
+    public ResponseEntity<?> deleteQuestion(@PathVariable Long id) {
+        try {
+            questionService.deleteQuestion(id);
+            return ResponseEntity.noContent().build();
+        } catch (Exception ex) {
+            // Handle any other exception
+            String errorMessage = String.format("Error occurred: %s. Exception Type: %s", ex.getMessage(), ex.getClass().getSimpleName());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorMessage);
+        }
+    }
 
     @GetMapping("/subjects")
-    public ResponseEntity<List<String>> getAllSubjects(){
-        List<String> subjects = questionService.getAllSubjects();
-        return ResponseEntity.ok(subjects);
-    };
+    public ResponseEntity<?> getAllSubjects() {
+        try {
+            List<String> subjects = questionService.getAllSubjects();
+            return ResponseEntity.ok(subjects);
+        } catch (Exception ex) {
+            // Handle any exception and return error message with exception type
+            String errorMessage = String.format("Error occurred: %s. Exception Type: %s", ex.getMessage(), ex.getClass().getSimpleName());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorMessage);
+        }
+    }
 
     @GetMapping("/difficulty")
-    public ResponseEntity<List<String>> getDifficulty(){
-        List<String> difficulties = questionService.getAllDifficulties();
-        return ResponseEntity.ok(difficulties);
-    };
+    public ResponseEntity<?> getDifficulty() {
+        try {
+            List<String> difficulties = questionService.getAllDifficulties();
+            return ResponseEntity.ok(difficulties);
+        } catch (Exception ex) {
+            // Handle any exception and return error message with exception type
+            String errorMessage = String.format("Error occurred: %s. Exception Type: %s", ex.getMessage(), ex.getClass().getSimpleName());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorMessage);
+        }
+    }
 
     @GetMapping("/quiz/fetch-questions-for-user")
-    public ResponseEntity<List<Question>> getQuestionsForUser(@RequestParam Integer numOfQuestion,@RequestParam String subject, @RequestParam String difficulty){
-        List<Question> questionsForUser = questionService.getQuestionsForUser(numOfQuestion, subject, difficulty);
-        List<Question> mutableQuestions = new ArrayList<>(questionsForUser);
-        Collections.shuffle(mutableQuestions);
+    public ResponseEntity<?> getQuestionsForUser(@RequestParam Integer numOfQuestion, @RequestParam String subject, @RequestParam String difficulty) {
+        try {
+            List<Question> questionsForUser = questionService.getQuestionsForUser(numOfQuestion, subject, difficulty);
+            List<Question> mutableQuestions = new ArrayList<>(questionsForUser);
+            Collections.shuffle(mutableQuestions);
 
-        int availableQuestions = Math.min(numOfQuestion, mutableQuestions.size());
+            int availableQuestions = Math.min(numOfQuestion, mutableQuestions.size());
+            List<Question> randomQuestions = mutableQuestions.subList(0, availableQuestions);
 
-        List<Question> randomQuestions = mutableQuestions.subList(0, availableQuestions);
-
-        return ResponseEntity.ok(randomQuestions);
+            return ResponseEntity.ok(randomQuestions);
+        } catch (Exception ex) {
+            // Handle any exception and return error message with exception type
+            String errorMessage = String.format("Error occurred: %s. Exception Type: %s", ex.getMessage(), ex.getClass().getSimpleName());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorMessage);
+        }
     }
 }
