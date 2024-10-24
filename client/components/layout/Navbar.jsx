@@ -7,7 +7,7 @@ const Navbar = () => {
     // Logout function to clear token and redirect to login page
     const handleLogout = () => {
         // Clear the token from localStorage or sessionStorage
-        localStorage.removeItem('authToken');
+        localStorage.removeItem('token');
         localStorage.removeItem('userDetails'); // If you store user details, clear them too
 
         // Redirect to the login page
